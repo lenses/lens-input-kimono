@@ -21,10 +21,10 @@ Lenses input component to make API queries from Kimono labs (https://www.kimonol
   <template>
     <link rel="stylesheet" href="lens-input-kimono.css">
     <div class="lens-container">
+      <div><label class="label">Kimono API URL: </label><input is="core-input" committedValue="{{url}}"></div>
+      <div>OR</div>
       <div><label class="label">Kimono API ID: </label><input is="core-input" value="{{apiId}}"></div>
       <div><label class="label">Kimono API Key: </label><input is="core-input" value="{{apiKey}}"></div>
-      <div>OR</div>
-      <div><label class="label">Kimono API URL: </label><input is="core-input" committedValue="{{url}}"></div>
 
       <div><label class="info">Records fetched:</label><div class="data">{{output.length}}</div></div>
     </div>
@@ -233,7 +233,7 @@ Lenses input component to make API queries from Kimono labs (https://www.kimonol
 
       // fire th-output-changed when output is changed. Useful for tests.
       outputChanged: function(){
-        this.fire("th-output-changed");
+        this.fire("lens-output-changed");
       }
       
     });

@@ -23,20 +23,15 @@
     // the event listener callback will be added / removed in every async test
     var callback = function() {};
 
-    var enigmaURL = "https://api.enigma.io/v2/data/iTX3qf5cwspm7ryII3ii5zqeHqUuoO4MctfLJFf2xU8eletxHvcI4/us.gov.atf.federal-firearms-licenses.complete-listing?limit=200"
-    var weatherURL = "http://api.openweathermap.org/data/2.5/weather?q=New+York&units=imperial"
+    var apiKey = 'pGBDPzLjFTCHJcpGanF7v91QhzEYAzbB',
+        apiId = '6xkx0a6m',
+        kimonoURL = 'http://www.kimonolabs.com/api/6xkx0a6m?apikey=pGBDPzLjFTCHJcpGanF7v91QhzEYAzbB&kimseries';
 
     suite("<lens-input-kimono>", function() {
 
       test("component can be created as an object", function(done) {
         should.exist(myEl);
         done();
-      });
-
-      test("finds first array", function() {
-        var testObj = {"zero": "a string of text!!", "first": [1, 2, 3], "second": [4, 5, 6]};
-        var firstArray = myEl._findFirstArray(testObj, 2);
-        firstArray.should.equal(testObj["first"]);
       });
 
       test("flattens multi-level array", function() {
@@ -74,50 +69,62 @@
       test("set api url", function(done) {
 
         // set the event listener callback
-        myEl.removeEventListener("th-output-changed", callback);
+        myEl.removeEventListener("lens-output-changed", callback);
         callback = function(e) {
-          myEl.url.should.equal(enigmaURL);
+          myEl.url.should.equal(kimonoURL);
           done();
         };
-        myEl.addEventListener("th-output-changed", callback);
+        myEl.addEventListener("lens-output-changed", callback);
 
         // set input url
-        myEl.url = enigmaURL;
+        myEl.url = kimonoURL;
 
         // fire th-outputReady event
         flush(function() {
         });
       });
 
-      test("outputs result with length 200", function() {
-        myEl.output.length.should.equal(200);
+      test("outputs result at least 10", function() {
+        myEl.output.length.should.least(10);
       });
 
-      test("accepts custom callback", function(done) {
-        myEl.removeEventListener("th-output-changed", callback);
 
-        function customCallback(xhr) {
-          var data = JSON.parse(xhr.response);
-          var firstArray = myEl._findFirstArray(data, 2);
-          firstArray.should.be.an('array');
-          firstArray.length.should.equal(myEl.output.length);
+      test("query by apiId and apiKey", function(done) {
+
+        // set the event listener callback
+        myEl.removeEventListener("lens-output-changed", callback);
+        callback = function(e) {
+          myEl.url.should.equal(kimonoURL);
           done();
-        }
-        myEl.queryData(customCallback);
+        };
+        myEl.addEventListener("lens-output-changed", callback);
+
+        // set input url
+        myEl.apiKey = apiKey;
+        myEl.apiId = apiId;
+
+        // fire th-outputReady event
+        flush(function() {
+        });
       });
 
+      test("outputs result at least 10", function() {
+        myEl.output.length.should.least(10);
+      });
+
+/*
       test("returns flattened result on JSON that has no array", function(done) {
         var originalJSON = {};
         var flatJSON = {};
 
         // set the event listener callback
-        myEl.removeEventListener("th-output-changed", callback);
+        myEl.removeEventListener("lens-output-changed", callback);
         callback = function(e) {
           myEl.url.should.equal(weatherURL);
           flatJSON = myEl.output;
           // done();
         };
-        myEl.addEventListener("th-output-changed", callback);
+        myEl.addEventListener("lens-output-changed", callback);
 
         // set input url
         myEl.url = weatherURL;
@@ -133,7 +140,7 @@
         myEl.queryData(customCallback);
 
       });
-
+*/
     });
 
   </script>
