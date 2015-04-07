@@ -23,10 +23,10 @@ Lenses input component to make API queries from Kimono labs (https://www.kimonol
     <div class="lens-container">
       <div><label class="label">Kimono API ID: </label><input is="core-input" value="{{apiId}}"></div>
       <div><label class="label">Kimono API Key: </label><input is="core-input" value="{{apiKey}}"></div>
-      <p>OR</p>
+      <div>OR</div>
       <div><label class="label">Kimono API URL: </label><input is="core-input" value="{{url}}"></div>
 
-      <div><label class="label">Num Records: </label><div class="data">{{output.length}}</div></div>
+      <div><label class="info">Records fetched:</label><div class="data">{{output.length}}</div></div>
     </div>
     
   </template>
