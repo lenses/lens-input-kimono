@@ -24,7 +24,7 @@ Lenses input component to make API queries from Kimono labs (https://www.kimonol
       <div><label class="label">Kimono API ID: </label><input is="core-input" value="{{apiId}}"></div>
       <div><label class="label">Kimono API Key: </label><input is="core-input" value="{{apiKey}}"></div>
       <div>OR</div>
-      <div><label class="label">Kimono API URL: </label><input is="core-input" value="{{url}}"></div>
+      <div><label class="label">Kimono API URL: </label><input is="core-input" committedValue="{{url}}"></div>
 
       <div><label class="info">Records fetched:</label><div class="data">{{output.length}}</div></div>
     </div>
@@ -77,40 +77,51 @@ Lenses input component to make API queries from Kimono labs (https://www.kimonol
        */     
       apiId: null,
 
+      _CORS_PROXY : 'http://makelenses.com:8000/', 
+
       domReady: function() {
           var self = this;
 
           if(this.apiKey && this.apiId) {
-            self.queryData();
+            self.queryDataByApiId();
           }
           else if(this.url) {
-            self.queryDataWithUrl();
+            self.queryDataByUrl();
           }
       }, 
 
       /**
        *  Query the API, flatten results, and set <code>output</code>.
        *  
-       *  @method queryData
+       *  @method queryDataByApiId
        */
-      queryData: function() {
+      queryDataByApiId: function() {
           var self = this;
-          var apiKey = self.apiKey;
-          var apiId = self.apiId;
-          
-          self._makeCORSCall(apiId, apiKey);
+
+          if(self.apiId && self.apiKey)
+          {
+
+            var url = self._CORS_PROXY+"www.kimonolabs.com/api/" + self.apiId + "?apikey=" + self.apiKey;
+            self._makeCORSCall(url);
+          }
 
       },
 
       /**
        *  Query the API with an URL, flatten results, and set <code>output</code>.
        *  
-       *  @method queryDataWithUrl
+       *  @method queryDataByApiIdWithUrl
        */
-      queryDataWithUrl: function() {
+      queryDataByUrl: function() {
           var self = this;
-          var url = self.url;
+          
+          if(self.url) {
+            var url = self.url.replace(/(ftp|http|https):\/\//, '');
+            url = self._CORS_PROXY + url;
+            self._makeCORSCall(url);
+          }
 
+          /*
           var parser = document.createElement('a');
           parser.href = url;
 
@@ -121,28 +132,29 @@ Lenses input component to make API queries from Kimono labs (https://www.kimonol
               self._makeCORSCall(apiId, apiKey);
             }
           }
+          */
 
       },
 
       urlChanged: function() {
-        this.queryDataWithUrl();
+        this.queryDataByUrl();
       },
 
       apiIdChanged: function() {
-        this.queryData();
+        this.queryDataByApiId();
       },
 
       apiKeyChanged: function() {
-        this.queryData();
+        this.queryDataByApiId();
       },
 
-      _makeCORSCall: function(apiId, apiKey) {
+      _makeCORSCall: function(url) {
 
             var self = this;
             var method = 'GET';
             var xhr = new XMLHttpRequest();
             if ("withCredentials" in xhr) {
-              xhr.open(method, "http://makelenses.com:8000/www.kimonolabs.com/api/" + apiId + "?apikey=" + apiKey, true);
+              xhr.open(method, url, true);
             } else if (typeof XDomainRequest != "undefined") {
               xhr = new XDomainRequest();
               xhr.open(method, url);
